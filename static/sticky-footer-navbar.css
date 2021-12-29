@@ -1,0 +1,181 @@
+/* Sticky footer styles
+-------------------------------------------------- */
+html {
+    position: relative;
+    min-height: 100%;
+    -webkit-tap-highlight-color: transparent;
+}
+body {
+  /* Margin bottom by footer height */
+  margin-bottom: 50px;
+}
+.footer {
+  position: absolute; /* change to fixed for footer that remains in viewport at all times*/
+  bottom: 0;
+  width: 100%;
+  /* Set the fixed height of the footer here */
+  height: 50px;
+  line-height: 50px; /* Vertically center the text there */
+  background-color:#f5f5f5;
+}
+
+/* Render URLs as white and remove underline */
+.footer button > a {
+  text-decoration: none;
+  color: white;
+}
+
+.btn-primary-no-hover {
+  color: #fff;
+  background-color: #007bff;
+  border-color: #007bff;
+}
+
+
+/* Custom page CSS
+-------------------------------------------------- */
+
+body > .container-fluid {
+  padding: 20px 25px 0;
+  max-width: 1400px;
+}
+
+/* Replace thick border under table header with a thinner one */
+.table > :not(:first-child) {
+  border-top: 0;
+}
+#outputTable thead {
+  border-bottom-width: 1px;
+  border-color: #000;
+}
+
+#input_content {
+  padding: 0px 25px 0;
+}
+
+/* tr td:first-child { */
+/* tr td:nth-child(2) {
+  font-weight: bold;
+} */
+
+/* #infoIcon {
+  cursor: pointer;
+} */
+
+#input_content th,
+#input_content td {
+  border-style: none;
+}
+
+#input_content td {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#resultAlert {
+  width: 50%;
+  margin-bottom: 65px;
+}
+
+.footer > div {
+  text-align: center;
+  /* padding-right: 15px;
+  padding-left: 15px; */
+}
+
+#floatKeyboardWrapper {
+  position: absolute; /* Don't push footer div to keep it central to page*/
+  float:left;
+  margin-top: 12px;
+  margin-left: 15px;
+  /* width: 0; */
+}
+
+#floatKeyboardWrapper:hover {
+  color: #0d6efd;
+  cursor: pointer;
+}
+
+#infoIcon:hover {
+  color: #0d6efd;
+  cursor: pointer;
+}
+
+/* Vertically center svg icons in buttons */
+.bi-clipboard{
+  vertical-align: -.125em;
+}
+
+defs svg {
+  height: 0;
+  position: absolute;
+  width: 0;
+}
+
+#keyboardModal .modal-dialog {
+  max-width: 300px;
+}
+
+#keyboardModal .modal-body > p > button {
+  width: 30px;
+  height: 30px;
+  font-weight:bold;
+}
+
+#keyboardModal .modal-body > p > span {
+  vertical-align: middle;
+  margin-left: 10px;
+}
+
+#inputTable td:nth-child(4),
+#inputTable td:nth-child(5)
+ {
+  width: 150px;
+ }
+
+.nInput,
+.nPeakInput {
+  /* max-width: 60px; */
+  min-width: 50px;
+}
+
+#outputTable {
+  -webkit-user-select: none; /* Safari */
+  -ms-user-select: none; /* IE 10+ and Edge */
+  user-select: none; /* Standard syntax */
+}
+
+.blue-background-class {
+	background-color: #C8EBFB;
+}
+
+.white-background-class {
+  background-color: #fff;
+}
+
+.grabbable {
+  cursor: move; /* fallback if grab cursor is unsupported */
+  cursor: grab;
+  cursor: -moz-grab;
+  cursor: -webkit-grab;
+}
+
+/* (Optional) Apply a "closed-hand" cursor during drag operation. */
+.grabbable:active {
+  cursor: grabbing;
+  cursor: -moz-grabbing;
+  cursor: -webkit-grabbing;
+}
+
+/* Hide id and input_row_idx */
+#outputTable td:last-child,
+#outputTable th:last-child,
+#outputTable td:nth-last-child(2),
+#outputTable th:nth-last-child(2) {
+  display: none;
+}
+
+/* select:invalid,
+select option[value=""] {
+  color: #999999;
+} */

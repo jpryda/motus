@@ -1,0 +1,431 @@
+{% extends "base.html" %}
+
+{% block input_content %}
+<table id='inputTable' class="table">
+    <tr>
+        {% for col in input_column_names %}
+        <th>{{col.title().replace('_',' ')}}</th>
+        {% endfor %}
+    </tr>
+    {% for x in [1] %}
+    <tr>
+        {% for col in input_column_names %}
+        <td>
+            {% if col == "n" %}
+              <input type="number" inputmode="decimal" value="6" min="1" class="form-control form-control-sm nInput" onkeypress="return (event.charCode >= 48 && event.charCode <= 57 || event.charCode == 46)">
+            {% elif col == "n_peak_intensity" %}
+              <input type="number" inputmode="decimal" max="6" value="" min="0" class="form-control form-control-sm nPeakInput" onkeypress="return (event.charCode >= 48 && event.charCode <= 57 || event.charCode == 46)">
+            {% else %}
+              <select class='form-select form-select-sm'>
+                <option value="" selected="selected">All</option>
+                {% for item in options_data[loop.index-1] %}
+                <option value="{{item}}">{{item}}</option>
+                {% endfor %}
+                {% if col in ["parent_exercise"] %}
+                    <option value="na">None</option>
+                {% endif %}
+              </select>
+            {% endif %}
+        </td>
+        {% endfor %}
+        <td style='vertical-align: middle; width: 10px' data-toggle="tooltip" data-placement="top" title="Population"><span class='text-muted totalNumExercises'>({{total_num_exercises}})</span></td>
+    </tr>
+    {% endfor %}
+</table>
+
+<defs >
+  <svg id="clipboardIcon" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-clipboard">
+    <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"></path>
+    <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"></path>
+  </svg>
+  <svg id="rightArrowIcon" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-arrow-right">
+    <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"/>
+  </svg>
+  <svg id="checkIcon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-lg">
+    <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425a.247.247 0 0 1 .02-.022Z"/>
+  </svg>
+  <svg id='keyboardIcon' xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-keyboard">
+    <path d="M14 5a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h12zM2 4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H2z"/>
+    <path d="M13 10.25a.25.25 0 0 1 .25-.25h.5a.25.25 0 0 1 .25.25v.5a.25.25 0 0 1-.25.25h-.5a.25.25 0 0 1-.25-.25v-.5zm0-2a.25.25 0 0 1 .25-.25h.5a.25.25 0 0 1 .25.25v.5a.25.25 0 0 1-.25.25h-.5a.25.25 0 0 1-.25-.25v-.5zm-5 0A.25.25 0 0 1 8.25 8h.5a.25.25 0 0 1 .25.25v.5a.25.25 0 0 1-.25.25h-.5A.25.25 0 0 1 8 8.75v-.5zm2 0a.25.25 0 0 1 .25-.25h1.5a.25.25 0 0 1 .25.25v.5a.25.25 0 0 1-.25.25h-1.5a.25.25 0 0 1-.25-.25v-.5zm1 2a.25.25 0 0 1 .25-.25h.5a.25.25 0 0 1 .25.25v.5a.25.25 0 0 1-.25.25h-.5a.25.25 0 0 1-.25-.25v-.5zm-5-2A.25.25 0 0 1 6.25 8h.5a.25.25 0 0 1 .25.25v.5a.25.25 0 0 1-.25.25h-.5A.25.25 0 0 1 6 8.75v-.5zm-2 0A.25.25 0 0 1 4.25 8h.5a.25.25 0 0 1 .25.25v.5a.25.25 0 0 1-.25.25h-.5A.25.25 0 0 1 4 8.75v-.5zm-2 0A.25.25 0 0 1 2.25 8h.5a.25.25 0 0 1 .25.25v.5a.25.25 0 0 1-.25.25h-.5A.25.25 0 0 1 2 8.75v-.5zm11-2a.25.25 0 0 1 .25-.25h.5a.25.25 0 0 1 .25.25v.5a.25.25 0 0 1-.25.25h-.5a.25.25 0 0 1-.25-.25v-.5zm-2 0a.25.25 0 0 1 .25-.25h.5a.25.25 0 0 1 .25.25v.5a.25.25 0 0 1-.25.25h-.5a.25.25 0 0 1-.25-.25v-.5zm-2 0A.25.25 0 0 1 9.25 6h.5a.25.25 0 0 1 .25.25v.5a.25.25 0 0 1-.25.25h-.5A.25.25 0 0 1 9 6.75v-.5zm-2 0A.25.25 0 0 1 7.25 6h.5a.25.25 0 0 1 .25.25v.5a.25.25 0 0 1-.25.25h-.5A.25.25 0 0 1 7 6.75v-.5zm-2 0A.25.25 0 0 1 5.25 6h.5a.25.25 0 0 1 .25.25v.5a.25.25 0 0 1-.25.25h-.5A.25.25 0 0 1 5 6.75v-.5zm-3 0A.25.25 0 0 1 2.25 6h1.5a.25.25 0 0 1 .25.25v.5a.25.25 0 0 1-.25.25h-1.5A.25.25 0 0 1 2 6.75v-.5zm0 4a.25.25 0 0 1 .25-.25h.5a.25.25 0 0 1 .25.25v.5a.25.25 0 0 1-.25.25h-.5a.25.25 0 0 1-.25-.25v-.5zm2 0a.25.25 0 0 1 .25-.25h5.5a.25.25 0 0 1 .25.25v.5a.25.25 0 0 1-.25.25h-5.5a.25.25 0 0 1-.25-.25v-.5z"/>
+  </svg>
+</defs>
+
+<button type="button" class="btn btn-secondary" id="removeRowBtn">-</button>
+<button type="button" class="btn btn-secondary" id="addRowBtn">+</button>
+<button type="button" class="btn btn-primary" id="generateBtn">Generate</button>
+<button type="button" class="btn btn-dark" id="pushNotionBtn">Push to Notion</button>
+<button type="button" class="btn btn-outline-secondary shadow-none" id="copyTblBtn" data-clipboard-target="#outputTable" data-toggle="tooltip" data-placement="top" title="Copy to clipboard">
+  <svg class="bi-clipboard" width="16" height="16" viewBox="0 0 16 16"><use xlink:href="#clipboardIcon"/></svg>
+</button>
+{% endblock %}
+
+{% block output_content %}
+{{ new_workout_table|safe }}
+{% endblock %}
+<!-- <table id='outputTable' class="table table-striped table-hover table-sm">
+  <tr>
+      {% for col in output_column_names %}
+        <th>{{col}}</th>
+      {% endfor %}
+  </tr>
+  {% for row in row_data %}
+  <tr>
+      {% for col, row_ in zip(output_column_names, row) %}
+        <td>{{row_}}</td>
+      {% endfor %}
+  </tr>
+  {% endfor %}
+</table> -->
+
+{% block footer_span %}
+<!-- <span class="text-muted"></span> -->
+
+<!-- Keyboard shortcut -->
+<svg id='floatKeyboardWrapper' width="25" height="25" viewBox="0 0 16 16" data-bs-toggle="modal" data-bs-target="#keyboardModal"><use xlink:href="#keyboardIcon"/></svg>
+<div class='container-fluid'>
+
+  <!-- Notion Input -->
+  <button type="button" class="btn btn-secondary">
+    <a href="{{calisthenics_menu_public_url}}" target='_blank'>Notion Workout Source</a>
+  </button>
+
+  <!-- Right Arrow -->
+  <svg width="20" height="16" viewBox="0 0 16 16"><use xlink:href="#rightArrowIcon"/></svg>
+
+  <!-- Notion Output -->
+  <!-- Dropup button -->
+  <div class="btn-group dropup">
+    <button type="button" class="btn btn-secondary disabled">
+      {{session['root_page_title_for_upload'] if 'root_page_title_for_upload' in session else 'Authorization Required'}}
+    </button>
+    <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+      <span class="visually-hidden">Toggle Dropdown</span>
+    </button>
+    <ul class="dropdown-menu dropdown-menu-sm-end">
+      <li><a class="dropdown-item" href="{{ url_for('login') }}" style="line-height: initial;">Notion Authorize</a></li>
+    </ul>
+  </div>
+</div>
+{% endblock %}
+
+<!-- Design Modals -->
+{% block modal %}
+<!-- About Modal -->
+<div class="modal fade" id="infoModal" tabindex="-1" aria-labelledby="aboutModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="aboutModalLabel">About {{title}}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>This app serves as an intermediary between the <span style="font-weight:bold">curator</span> and the <span style="font-weight:bold">practitioner</span>.</p>
+        <p>You want control over <span style="font-weight:bold">high-fidelity exercises</span> but prefer to delegate the workout programming.</p>
+        <p>You care about <span style="font-weight:bold">consistent quality</span> of repetitions but seek to benefit from <span style="font-weight:bold">entropy</span> of selection.</p>
+        <p>This is built for you.</p>
+      </div>
+      <!-- <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div> -->
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="keyboardModal" tabindex="-1" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p><button type="button" class="btn btn-sm btn-outline-dark disabled">G</button><span class="text-muted">Generate</span></p>
+        <p><button type="button" class="btn btn-sm btn-outline-dark disabled">+</button><span class="text-muted">Add row</span></p>
+        <p><button type="button" class="btn btn-sm btn-outline-dark disabled">-</button><span class="text-muted">Remove row</span></p>
+        <p><button type="button" class="btn btn-sm btn-outline-dark disabled">N</button><span class="text-muted">Select final N</span></p>
+        <p><button type="button" class="btn btn-sm btn-outline-dark disabled">C</button><span class="text-muted">Copy to clipboard</span></p>
+      </div>
+      <!-- <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div> -->
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block custom_scripts %}
+<script>
+
+    $(function(){
+      // var url_base = window.location.href //"http://127.0.0.1:5000"
+
+      function BtnLoading(elem) {
+        $(elem).attr("data-original-text", $(elem).html());
+        $(elem).prop("disabled", true);
+        $(elem).html('<i class="spinner-border spinner-border-sm"></i> Pushing...');
+      }
+
+      function BtnReset(elem) {
+          $(elem).prop("disabled", false);
+          $(elem).html($(elem).attr("data-original-text"));
+      }
+
+      function makeOutputTblSortable(){
+        var outputTable = $('#outputTable > tbody').get(0); // return HTML DOM object as per document.getElementById()
+        new Sortable(outputTable, {
+          animation: 150,
+          delay: 100, // time in milliseconds to define when the sorting should start
+	        delayOnTouchOnly: true,
+          ghostClass: 'blue-background-class',
+          dragClass: 'white-background-class',
+          onEnd: function (evt) { // use onChange for live updating of rows
+            $("#outputTable > tbody > tr").each(function(i, tr) {
+              // $(this).find("td").first().text(i+1);
+              $(this).find("td:first-child").text(i+1);
+            });
+          }
+        });
+
+        $('#outputTable tbody').addClass('grabbable');
+      }
+
+      function isTouchScreendevice() {
+          return 'ontouchstart' in window || navigator.maxTouchPoints;
+        };
+
+      function setToolTipsNonTouchDevices(){
+        // Init tooltips ONLY on non-mobile devices
+        if(!isTouchScreendevice()){
+          $( "#inputTable th:eq( 3 )" ).attr({'data-toggle':'tooltip', 'data-placement':'top', 'title':'Number to sample'});
+          $( "#inputTable th:eq( 4 )" ).attr({'data-toggle':'tooltip', 'data-placement':'top', 'title':'Max. number of peak intensity exercises (< N)'});
+          $( "#outputTable th:eq( 0 )" ).attr({'data-toggle':'tooltip', 'data-placement':'top', 'title':'Sorted 1st by Ring Height, 2nd by Peak Intensity'});
+          $( "#outputTable th:eq( 1 )" ).attr({'data-toggle':'tooltip', 'data-placement':'top', 'title':'Keep exercise across generations'});
+          $('[data-toggle="tooltip"]').tooltip({ trigger:'hover' });
+        } else {
+          // $('.btn-primary:hover').addClass('btn-primary-no-hover');
+          $('.btn-primary').hover( function(){
+            $(this).css('background-color', '#007bff');
+          })
+        }
+      }
+
+      $("#generateBtn").click( function() {
+          var inputTableObj = $('#inputTable').tableToJSON({
+            extractor : function(cellIndex, $cell) {
+            // return $cell.find('span').text() || $cell.val();
+            // For the table return either a selected dropdown option OR if non-existent, for 'n', the input value
+            // $cell.find('option:selected').val() only appears to retun the first word before a space
+            return $cell.find('option:selected').val() || $cell.find('input').val();
+            }
+          });
+          // console.log(inputTableObj);
+          // alert(JSON.stringify(inputTableObj));
+
+          // Get ids for any pinned exercises
+          // $('#outputTable').find('input:checked').closest('tr').get(0)
+          var pinnedTrs = $('#outputTable').find('input:checked').closest('tr')
+          var pinnedExerciseIds = pinnedTrs.find('td:last-child').map(function(){
+              return($(this).text())
+          }).get()
+
+          var pinnedInputRowIdxs = pinnedTrs.find('td:nth-last-child(2)').map(function(){
+              return(parseInt($(this).text()))
+          }).get()
+
+          pinnedInputRowIdxsExerciseIds = {
+            'id': pinnedExerciseIds,
+            'input_row_idx': pinnedInputRowIdxs
+          }
+
+          var inputTablePinnedExerciseIdsObj = {
+            'input_table_dict': inputTableObj,
+            'pinned_input_row_idxs_exercise_ids': pinnedInputRowIdxsExerciseIds
+          };
+
+          $.ajax({
+                  type: "POST",
+                  url: "{{ url_for('regenerate_workout') }}", // url_base + "regenerate", //localhost Flask
+                  data: JSON.stringify(inputTablePinnedExerciseIdsObj),
+                  dataType: 'html',
+                  contentType: "application/json",
+                  success: function(response){
+                    // console.log(response);
+                    $( "#outputContent" ).html(response);
+                    makeOutputTblSortable();
+                    setToolTipsNonTouchDevices()
+                  },
+                  error: function(response){
+                    if (!$( "#resultAlert" ).length) {
+                      // element doesn't exist
+                      $( "#outputContent" ).after( '<div class="container" id="resultAlert"></div>' );
+                    }
+                    $( "#resultAlert" ).removeClass("alert-warning alert-success").addClass("alert alert-danger alert-dismissible");
+                    $( "#resultAlert" ).html(
+                      "<h4 class='alert-heading'>Eek!</h4> " +
+                      "There are no exercises for the combination given " +
+                      "<button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>"
+                      );
+                    document.getElementById("resultAlert").scrollIntoView();
+                    }
+          });
+        });
+
+        $("#addRowBtn").click( function() {
+            // var $tr = $("#inputTable").find("tr").last();
+            var $tr = $("#inputTable tr:last-child");
+            var $clone = $tr.clone();
+            $clone.find('.nInput').val('1');
+            $clone.find('.nPeakInput').val('');
+            $tr.after($clone);
+            $clone.find('.totalNumExercises').text('({{total_num_exercises}})');
+        });
+
+        $("#removeRowBtn").click( function() {
+            var $rows = $('#inputTable').find('tr')
+            var $num_rows = $rows.length
+            if($num_rows > 2){
+              $rows.last().remove();
+            }
+        });
+
+        // Shortcut key bindings - refer to ASCII codes here https://www.freecodecamp.org/news/javascript-keycode-list-keypress-event-key-codes/
+        $(document).keydown(function(e){
+            if (e.which == 187) { // "+/=" button
+              $("#addRowBtn").click();
+            }
+            if (e.which == 189) { // "-/_" button
+              $("#removeRowBtn").click();
+            }
+            if (e.which == 71) { // "g" button
+              $("#generateBtn").click();
+            }
+            if (e.which == 67) { // "c" button
+              $("#copyTblBtn").click();
+            }
+            if (e.which == 78) { // "n" button
+              $("#inputTable tr:last-child").find("input").first().select();
+              // $("#inputTable tr:last-child").find("input:first-child").select();
+            }
+            // k - 75, p - 80
+            // return false; // stops any further keydown events being hit
+        });
+
+        var clipboard = new Clipboard('#copyTblBtn');
+        clipboard.on('success', (event) => {
+          event.clearSelection();
+          var copyButtonSvg = $( "#copyTblBtn > svg > use" )
+          $(copyButtonSvg).attr("xlink:href", "#checkIcon");
+          // $( "#copyTblBtn" ).attr("data-bs-original-title", "Copied!");
+          setTimeout(() => {
+            $(copyButtonSvg).attr("xlink:href", "#clipboardIcon");
+            // $( "#copyTblBtn" ).attr("data-bs-original-title", "Over");
+          }, 1.5e3);
+        });
+
+        $("#pushNotionBtn").click( function() {
+            var $this = $(this);
+            // Call Button Loading Function
+            BtnLoading($this);
+            if (!$( "#resultAlert" ).length) {
+              // element doesn't exist
+              $( "#outputContent" ).after( '<div class="container" id="resultAlert"></div>' );
+            }
+
+            var newWorkoutIds = $('#outputTable td:last-child').map(function(){
+              return($(this).text())
+            }).get();
+            // var idColIdx = $("#outputTable > tbody > tr:first > td").length - 1;
+            // var newWorkoutIds = $('#outputTable').tableToJSON({onlyColumns:[idColIdx]})
+
+            $.ajax({
+                    type: "POST",
+                    url: "{{ url_for('push_to_notion') }}", // url_base + "push_to_notion", //localhost Flask
+                    data: JSON.stringify(newWorkoutIds),
+                    dataType: 'html',
+                    contentType: "application/json",
+                    success: function(response){
+                      $( "#resultAlert" ).removeClass("alert-danger alert-warning").addClass("alert alert-success alert-dismissible");
+                      $( "#resultAlert" ).html(
+                        "<h4 class='alert-heading'>Success!</h4>" +
+                        "Workout pushed to a <a href=" + JSON.parse(response)['db_url'] + " target='_blank' class='alert-link'>Notion DB</a> in {{session['root_page_title_for_upload']}}" +
+                        "<button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>"
+                       );
+                    },
+                    error: function(response){
+                      $( "#resultAlert" ).removeClass("alert-danger alert-success").addClass("alert alert-warning alert-dismissible");
+                      $( "#resultAlert" ).html(
+                        "<h4 class='alert-heading'>Uh-oh!</h4> " +
+                        "Workout was not able to be pushed to Notion. You may need to <a href=" + "{{ url_for('login') }}" + ">re-authorize</a>. " +
+                        "<button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>"
+                       );
+                    },
+                    complete: function(response){
+                      $( "#resultAlert" ).attr("role", "alert");
+                      //Call Button Reset Function after AJAX or your code execution
+                      BtnReset($this);
+                      document.getElementById("resultAlert").scrollIntoView();
+                    }
+            });
+        });
+
+        makeOutputTblSortable();
+
+        $(".nInput").on("input", function(){
+          $(".nPeakInput").attr({
+            "max" : $(this).val()
+          });
+        });
+
+        $("#inputTable").on("change", "select", function(){
+            // 0-based index with header means first row will be index 1
+            row_idx = $(this).closest("tr").index();
+
+            var inputTable = $('#inputTable').tableToJSON({
+              extractor : function(cellIndex, $cell) {
+                return $cell.find('option:selected').val();
+              }
+              // ignoreColumns: [5]
+            });
+            // console.log(inputTable);
+            // Here the first row will be in the 0th index now table headers have become keys
+            var inputRow = inputTable[row_idx-1];
+            // console.log(inputRow);
+
+            $.ajax({
+                  type: "POST",
+                  url: "{{ url_for('option_filter_frequency') }}",
+                  data: JSON.stringify(inputRow),
+                  dataType: 'html',
+                  contentType: "application/json",
+                  success: function(response){
+                    // console.log('Update row ' + row_idx + ' with ' + JSON.parse(response)['total_num_exercises']);
+                    // console.log('#inputTable tbody tr:nth-child(' + row_idx+1 + ')');
+                    var total_num_exercises = JSON.parse(response)['total_num_exercises']
+                    // Back to 0-based index with header
+                    var rows = $('tr', '#inputTable');
+                    var totalNumExercisesSpan = rows.eq(row_idx).find(".totalNumExercises")
+                    totalNumExercisesSpan.text('(' + total_num_exercises + ')');
+                    if(total_num_exercises == 0){
+                      totalNumExercisesSpan.removeClass('text-muted');
+                      totalNumExercisesSpan.addClass('text-danger');
+                    } else{
+                      totalNumExercisesSpan.removeClass('text-danger');
+                      totalNumExercisesSpan.addClass('text-muted');
+                    }
+                  }
+            });
+
+        });
+
+        // $('.btn-primary').on('click', function(){
+        //   $(this).blur();
+        // });
+
+        setToolTipsNonTouchDevices()
+
+    });
+
+</script>
+{% endblock %}
