@@ -21,6 +21,9 @@ You specify the following criteria in each "phase":
 * "Pin" specific exercises across generations that you know your body is craving.
 * See the population size for a given combination of input criteria prior to sampling.
 
+<img src="https://i.imgur.com/a5eNGTA.png" width="1000">
+<img src="https://i.imgur.com/B6yhR2L.png" width="1000">
+
 ## Why Notion as the source?
 
 * A UI that promotes editability and collaborative curation
