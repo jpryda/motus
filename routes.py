@@ -43,7 +43,6 @@ else:
 
 # Root page for DB push
 # calisthenics_logging_framework_page_id = '95502915-cb82-4915-86c2-86ea37e291b8'
-ORDER_PROPERTY_NAME = 'Order'
 
 def yt_url_expander(video_url):
   short_url = 'youtu.be/'
@@ -158,21 +157,21 @@ def construct_json_rows_for_upload(menu_db_query_results, selected_ids, types_to
         row_dict[k] = {'title': [{'text': {'content': x['text']['content']}} for x in v['title']]}
 
     # Finally add the order as specified by the index of the id of the generated workout
-    # row_dict[ORDER_PROPERTY_NAME] = session['new_workout_ids'].index(row['id'])
-    row_dict[ORDER_PROPERTY_NAME] = {'number': session['new_workout_ids'].index(row['id']) + 1}
+    # row_dict['#'] = session['new_workout_ids'].index(row['id'])
+    row_dict['#'] = {'number': session['new_workout_ids'].index(row['id']) + 1}
     row_list_to_upload.append(row_dict)
 
   # Sort according to order of generated new_workout. Negate to ensure first is inserted at the end to be at the top (if syncrhonous)
-  row_list_to_upload = sorted(row_list_to_upload, key = lambda x: -x[ORDER_PROPERTY_NAME]['number'])
+  row_list_to_upload = sorted(row_list_to_upload, key = lambda x: -x['#']['number'])
   # Remove Order key
-  # row_list_to_upload = [{k:v for k,v in x.items() if k != 'Order'} for x in row_list_to_upload]
+  # row_list_to_upload = [{k:v for k,v in x.items() if k != '#'} for x in row_list_to_upload]
   return(row_list_to_upload)
 
 calisthenics_menu_base_url = 'https://pear-knight-937.notion.site/'
 calisthenics_menu_public_url = calisthenics_menu_base_url + '9f2761e5a1c14987ae85f8e4d4a37f8e?v=8445b310230a40b7bd4ae2ca0d92bd8d'
 
 options_key_order = ['category','equipment','parent_exercise'] # 'is_peak_intensity','primary_muscle_groups'
-output_column_names = ['order','pin','exercise','category','is_peak_intensity','equipment','ring_height','tempo','intensities','primary_muscle_groups','input_row_idx','id']
+output_column_names = ['#','pin','exercise','category','is_peak_intensity','equipment','ring_height','tempo','intensities','primary_muscle_groups','input_row_idx','id']
 
 @app.route("/")
 def default_workout():
@@ -272,7 +271,7 @@ async def push_to_notion():
 
     # Create a new DB on the server with schema with additional custom Order numeric field not in source Menu DB
     menu_db_schema_for_upload = {k:v for k,v in menu_db_schema['properties'].items() if v['type'] not in types_to_ignore}
-    menu_db_schema_for_upload[ORDER_PROPERTY_NAME] = {'name': ORDER_PROPERTY_NAME, 'number': {'format': 'number'}, 'type': 'number'}
+    menu_db_schema_for_upload['#'] = {'name': '#', 'number': {'format': 'number'}, 'type': 'number'}
 
     ## Title of new DB
     exercise_categories_str = '-'.join(set([y for x in session['categories'] for y in x]))

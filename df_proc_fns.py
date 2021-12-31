@@ -148,8 +148,8 @@ def sort_workout(new_workout_df):
       .drop(['first_ring_height','second_ring_height'], axis=1)
       .reset_index(drop=True)
       .reset_index()
-      .rename(columns={'index': 'order'})
-  )[['id'] + ['input_row_idx','order','exercise','parent_exercise','category','is_peak_intensity','equipment','primary_muscle_groups','ring_height','intensities','tempo']]
+      .rename(columns={'index': '#'})
+  )[['id'] + ['input_row_idx','#','exercise','parent_exercise','category','is_peak_intensity','equipment','primary_muscle_groups','ring_height','intensities','tempo']]
   return(new_workout_sorted_df)
 
 def generate_and_sort_workout(preprocessed_menu_df, exercise_filters, pinned_exercise_dict={}):
@@ -191,7 +191,7 @@ def produce_workout_table_html(df, menu_db_base_url, output_column_names, pinned
     df.apply(lambda x: f"<a href='{menu_db_base_url}{x.id.replace('-','')}' target='_blank' class='link-dark'><span style='font-weight:bold'>{x.exercise}</span></a>"
     , axis=1)
   )
-  df['order'] = df['order'] + 1 # Start at 0
+  df['#'] = df['#'] + 1 # Start at 0
   df['pin'] = (
     df.apply(lambda x: '<input type="checkbox" class="form-check-input" checked>'
                         if x.id in pinned_exercise_ids
@@ -201,7 +201,7 @@ def produce_workout_table_html(df, menu_db_base_url, output_column_names, pinned
   df = df[output_column_names]
   df.columns = df.columns.str.title().str.replace('_',' ')
   return(
-    '<hr> ' +
+    # '<hr> ' +
     df.to_html( classes = 'table table-striped table-sm',
                 index=False,
                 header=True,

@@ -36,8 +36,24 @@ body {
 -------------------------------------------------- */
 
 body > .container-fluid {
-  padding: 20px 25px 0;
+  padding: 15px 25px 0;
   max-width: 1400px;
+}
+
+@media only screen and (max-width: 600px) {
+  body > .container-fluid {
+    padding: 15px 15px 0;
+  }
+
+  #header_content {
+    position: sticky;
+    top:0;
+    background-color:#fff
+  }
+
+  #outputContent {
+    padding-top: 0px;
+  }
 }
 
 /* Replace thick border under table header with a thinner one */
@@ -49,7 +65,7 @@ body > .container-fluid {
   border-color: #000;
 }
 
-#input_content {
+#inputContent {
   padding: 0px 25px 0;
 }
 
@@ -62,12 +78,12 @@ body > .container-fluid {
   cursor: pointer;
 } */
 
-#input_content th,
-#input_content td {
+#inputContent th,
+#inputContent td {
   border-style: none;
 }
 
-#input_content td {
+#inputContent td {
   padding-top: 4px;
   padding-bottom: 4px;
 }
@@ -131,6 +147,10 @@ defs svg {
 #inputTable td:nth-child(5)
  {
   width: 150px;
+ }
+
+ #inputTable tr:first-child {
+   vertical-align: bottom;
  }
 
 .nInput,

@@ -14,7 +14,8 @@
     <link rel="mask-icon" href="{{ url_for('static', filename='safari-pinned-tab.svg') }}" color="#5bbad5">
     <meta name="msapplication-TileColor" content="#da532c">
     <meta name="theme-color" content="#ffffff">
-    <!-- <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}"> -->
+    <meta name="viewport" content="width=device-width">
+    <!-- <meta name="viewport" content="width=device-width"> -->
   </head>
   <body>
     {% block modal %}{% endblock %}
@@ -29,8 +30,12 @@
       </h1>
       <hr>
     </div>
-    <div class="container-fluid" id="input_content">
-      {% block input_content %}{% endblock %}
+    <div class="container-fluid" id="inputContent">
+      <div class="table-responsive">
+        {% block input_table %}{% endblock %}
+      </div>
+        {% block input_buttons %}{% endblock %}
+      <hr>
     </div>
     <div class="container-fluid table-responsive" id="outputContent">
       <!-- <hr> -->
