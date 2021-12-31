@@ -21,6 +21,9 @@ You specify the following criteria in each "phase":
 * "Pin" specific exercises across generations that you know your body is craving.
 * See the population size for a given combination of input criteria prior to sampling.
 
+<img src="https://i.imgur.com/a5eNGTA.png" width="1000">
+<img src="https://i.imgur.com/B6yhR2L.png" width="1000">
+
 ## Why Notion as the source?
 
 * A UI that promotes editability and collaborative curation
@@ -56,3 +59,24 @@ A: Motus preserves the exercise but still tries to sort the workout by ring heig
 # Tech
 
 The app is written in Python and running on Flask. Asyncio and Httpx produce huge speed improvements since we avoid waiting on IO-blocking GET/PUSH requests as we pull and push 1) exercises (pages) 2) exercise content (child blocks) and 3) any synced blocks that require further dereferencing.
+
+# Running the Flask App
+
+```
+git clone https://github.com/jpryda/motus.git app
+```
+Export the following environmental variables
+```
+NOTION_INTERNAL_SECRET (Internal Notion integration used to fetch the input Notion DB)
+LOCAL_NOTION_CLIENT_ID
+LOCAL_NOTION_CLIENT_SECRET
+```
+Launch the Flask app locally from the `app` folder
+```
+export FLASK_ENV=development; python -m flask run
+```
+In production set
+```
+PROD_NOTION_CLIENT_ID
+PROD_NOTION_CLIENT_SECRET
+```
