@@ -40,20 +40,8 @@ body > .container-fluid {
   max-width: 1400px;
 }
 
-@media only screen and (max-width: 600px) {
-  body > .container-fluid {
-    padding: 15px 15px 0;
-  }
-
-  #header_content {
-    position: sticky;
-    top:0;
-    background-color:#fff
-  }
-
-  #outputContent {
-    padding-top: 0px;
-  }
+#inputContent {
+  padding: 0px 25px 0;
 }
 
 /* Replace thick border under table header with a thinner one */
@@ -63,10 +51,6 @@ body > .container-fluid {
 #outputTable thead {
   border-bottom-width: 1px;
   border-color: #000;
-}
-
-#inputContent {
-  padding: 0px 25px 0;
 }
 
 /* tr td:first-child { */
@@ -199,3 +183,25 @@ defs svg {
 select option[value=""] {
   color: #999999;
 } */
+
+@media only screen and (max-width: 600px) {
+  body > .container-fluid,
+  #inputContent {
+    padding: 15px 15px 0;
+  }
+
+  #inputContent,
+  #outputContent {
+    padding-top: 0px
+  }
+
+  #header_content {
+    position: sticky;
+    top:0;
+    background-color:#fff
+  }
+
+  #outputContent {
+    padding-top: 0px;
+  }
+}
