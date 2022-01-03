@@ -19,7 +19,7 @@
   </head>
   <body>
     {% block modal %}{% endblock %}
-    <div class="container-fluid" id="header_content">
+    <div class="container-fluid" id="headerContent">
       <h1>{{ title }}
         <!-- <button type="button" class="btn btn-sm btn-link shadow-none" style="color: unset; padding: .25rem 0rem"> -->
           <svg id="infoIcon" xmlns="http://www.w3.org/2000/svg" data-bs-toggle="modal" data-bs-target="#infoModal" width="25" height="20" fill="currentColor" class="bi bi-info-circle" viewBox="0 0 16 16">
@@ -34,7 +34,9 @@
       <div class="table-responsive">
         {% block input_table %}{% endblock %}
       </div>
+      <div id="buttonRow">
         {% block input_buttons %}{% endblock %}
+      </div>
       <hr>
     </div>
     <div class="container-fluid table-responsive" id="outputContent">

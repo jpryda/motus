@@ -35,13 +35,23 @@ body {
 /* Custom page CSS
 -------------------------------------------------- */
 
+/*
+  https://developer.mozilla.org/en-US/docs/Web/CSS/padding
+  padding 2 values: top/bottom, right/left
+  padding 3 values: top, right/left, bottom
+  padding 4 values: top, right, bottom, left
+*/
 body > .container-fluid {
-  padding: 15px 25px 0;
+  padding: 15px 25px 0px;
   max-width: 1400px;
 }
 
+#outputContent {
+  padding-top: 0px;
+}
+
 #inputContent {
-  padding: 0px 25px 0;
+  padding-top: 0px;
 }
 
 /* Replace thick border under table header with a thinner one */
@@ -67,9 +77,13 @@ body > .container-fluid {
   border-style: none;
 }
 
-#inputContent td {
-  padding-top: 4px;
-  padding-bottom: 4px;
+#inputContent td,
+#inputContent th {
+  padding: 4px;
+}
+
+#inputContent th {
+  padding-bottom: 0px;
 }
 
 #resultAlert {
@@ -137,10 +151,14 @@ defs svg {
    vertical-align: bottom;
  }
 
+#inputTable {
+  margin-bottom: 10px;
+}
+
 .nInput,
 .nPeakInput {
   /* max-width: 60px; */
-  min-width: 50px;
+  min-width: 35px;
 }
 
 #outputTable {
@@ -184,10 +202,22 @@ select option[value=""] {
   color: #999999;
 } */
 
+#inputContent {
+  position: sticky;
+  top: 0;
+  background-color:rgba(255, 255, 255, 0.95);
+  z-index: 100;
+}
+
+/* #buttonRow {
+  position: sticky;
+  top: 0;
+} */
+
 @media only screen and (max-width: 600px) {
   body > .container-fluid,
   #inputContent {
-    padding: 15px 15px 0;
+    padding: 15px 15px 0px;
   }
 
   #inputContent,
@@ -195,13 +225,7 @@ select option[value=""] {
     padding-top: 0px
   }
 
-  #header_content {
-    position: sticky;
-    top:0;
-    background-color:#fff
-  }
-
-  #outputContent {
-    padding-top: 0px;
+  #keyboardIcon {
+    display: none;
   }
 }

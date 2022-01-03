@@ -95,7 +95,7 @@
 
   <!-- Notion Input -->
   <button type="button" class="btn btn-secondary">
-    <a href="{{calisthenics_menu_public_url}}" target='_blank'>Notion Workout Source</a>
+    <a href="{{calisthenics_menu_public_url}}" target='_blank'>Source</a>
   </button>
 
   <!-- Right Arrow -->
@@ -128,8 +128,8 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <p>This app serves as an intermediary between the <span style="font-weight:bold">curator</span> and the <span style="font-weight:bold">practitioner</span>.</p>
-        <p>You want control over <span style="font-weight:bold">high-fidelity exercises</span> but prefer to delegate the workout programming.</p>
+        <p>The {{title}} app serves as an intermediary between the <span style="font-weight:bold">curator</span> and the <span style="font-weight:bold">practitioner</span>.</p>
+        <p>You want control over <span style="font-weight:bold">high-fidelity exercises</span> but prefer to <span style="font-weight:bold">delegate the sequencing</span>.</p>
         <p>You care about <span style="font-weight:bold">consistent quality</span> of repetitions but seek to benefit from <span style="font-weight:bold">entropy</span> of selection.</p>
         <p>This is built for you.</p>
       </div>
@@ -211,6 +211,7 @@
           $( "#inputTable th:eq( 4 )" ).attr({'data-toggle':'tooltip', 'data-placement':'top', 'title':'Max. number of peak intensity exercises (< N)'});
           $( "#outputTable th:eq( 0 )" ).attr({'data-toggle':'tooltip', 'data-placement':'top', 'title':'Sorted 1st by Ring Height, 2nd by Peak Intensity'});
           $( "#outputTable th:eq( 1 )" ).attr({'data-toggle':'tooltip', 'data-placement':'top', 'title':'Keep exercise across generations'});
+          $( "#outputTable th:eq( 7 )" ).attr({'data-toggle':'tooltip', 'data-placement':'top', 'title':'Eccentric-Bottom-Concentric-Top. X=Explode'});
           $('[data-toggle="tooltip"]').tooltip({ trigger:'hover' });
         } else {
           // $('.btn-primary:hover').addClass('btn-primary-no-hover');

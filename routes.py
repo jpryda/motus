@@ -112,9 +112,6 @@ async def init_all():
 
     return(menu_db_query, menu_db_query_slct_df, menu_db_schema, page_id_blocks_mapping)
 
-# Create the Event Loop - https://stackoverflow.com/questions/47841985/make-a-python-asyncio-call-from-a-flask-route
-menu_db_query, menu_db_query_slct_df, menu_db_schema, page_id_blocks_mapping = asyncio.run(init_all())
-
 def construct_json_rows_for_upload(menu_db_query_results, selected_ids, types_to_ignore):
   # Package data in an appropriate format Notion expects: pull straight from results and filter based on generated workout
   # This pulls ALL fields, not just those selected in new_workout
@@ -166,6 +163,9 @@ def construct_json_rows_for_upload(menu_db_query_results, selected_ids, types_to
   # Remove Order key
   # row_list_to_upload = [{k:v for k,v in x.items() if k != '#'} for x in row_list_to_upload]
   return(row_list_to_upload)
+
+# Create the Event Loop - https://stackoverflow.com/questions/47841985/make-a-python-asyncio-call-from-a-flask-route
+menu_db_query, menu_db_query_slct_df, menu_db_schema, page_id_blocks_mapping = asyncio.run(init_all())
 
 calisthenics_menu_base_url = 'https://pear-knight-937.notion.site/'
 calisthenics_menu_public_url = calisthenics_menu_base_url + '9f2761e5a1c14987ae85f8e4d4a37f8e?v=8445b310230a40b7bd4ae2ca0d92bd8d'
