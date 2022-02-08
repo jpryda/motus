@@ -52,8 +52,10 @@ def yt_url_expander(video_url):
   else:
     return(video_url)
 
+# Flatten lists of lists of dictionarys [{}, [{},{}]] -> [{},{},{}]
 def flatten(l): return flatten(l[0]) + (flatten(l[1:]) if len(l) > 1 else []) if type(l) is list else [l]
 
+# Turn a list of unique single key dictionaries into a single dictionary
 def list_of_dicts_to_dict(l): return dict((k, v) for result in l for k, v in result.items())
 
 async def get_page_blocks(client, page_id):

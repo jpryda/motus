@@ -117,6 +117,7 @@ def generate_workout_3(menu_df, exercise_filters, pinned_exercise_dict={}):
         df_to_sample = df_to_sample[~df_to_sample.id.isin(specified_pinned_phase_df.id)]
         result_df = pd.concat([result_df, df_pinned_sampled])
         phase['n'] = phase['n'] - len(df_pinned_sampled)
+        phase['n_peak_intensity'] = phase['n_peak_intensity'] - len(df_pinned_sampled[df_pinned_sampled.is_peak_intensity])
 
     if 'n_peak_intensity' in phase:
       peak_df = df_to_sample[df_to_sample.is_peak_intensity]
