@@ -20,7 +20,7 @@ import pandas as pd
 from .df_proc_fns import *
 
 # Set Flask secret key to created a signed cookie used by the Flask session
-app.secret_key = 'calisthenics_yzzki6thSyyK!CPY'
+app.secret_key = os.getenv("FLASK_SECRET_KEY")
 
 authorization_base_url = 'https://api.notion.com/v1/oauth/authorize'
 token_url = 'https://api.notion.com/v1/oauth/token'
