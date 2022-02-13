@@ -69,13 +69,17 @@ The app is written in Python and running on Flask. Asyncio and Httpx produce hug
 ```
 git clone https://github.com/jpryda/motus.git app
 ```
+Dependencies
+```
+pip install  "Flask[async]" requests-oauthlib notion_client pandas
+```
 Export the following environmental variables
 ```
 NOTION_INTERNAL_SECRET (Internal Notion integration used to fetch the input Notion DB)
 LOCAL_NOTION_CLIENT_ID
 LOCAL_NOTION_CLIENT_SECRET
 ```
-Launch the Flask app locally from the `app` folder
+Launch the Flask app locally from the `app` folder making sure you have sourced all environmental variables beforehand
 ```
 export FLASK_ENV=development; python -m flask run
 ```
