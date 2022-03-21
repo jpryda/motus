@@ -176,22 +176,23 @@ calisthenics_menu_public_url = calisthenics_menu_base_url + '9f2761e5a1c14987ae8
 options_key_order = ['category','equipment','parent_exercise'] # 'is_peak_intensity','primary_muscle_groups'
 output_column_names = ['index','pin','exercise','category','is_peak_intensity','equipment','ring_height','tempo','intensities','primary_muscle_groups','input_row_idx','id']
 
+# Retrieve DB options
+# The ordering of options can be set by adjusting them in the Notion UI
+options_dict = {}
+for k, v in menu_db_schema['properties'].items():
+  if v['type'] in ['multi_select','select']:
+    field_type = v['type']
+    # Set values to snake case
+    options_dict[to_snake_case(k)] = [x['name'] for x in v[field_type]['options']]
+options_dict['is_peak_intensity'] = [True, False]
+
+# Fieldnames are capitalised in Notion
+options_dict_ordered = {k:options_dict[k] for k in options_key_order if k in options_dict}
+input_column_names = [k for k in options_key_order] + ['n','n_peak_intensity']
+
 @app.route("/")
 def default_workout():
     default_workout_df = generate_workout(menu_db_query_slct_df, default_exercise_filters, True, dict())
-    # Retrieve DB options
-    # The ordering of options can be set by adjusting them in the Notion UI
-    options_dict = {}
-    for k, v in menu_db_schema['properties'].items():
-      if v['type'] in ['multi_select','select']:
-        field_type = v['type']
-        # Set values to snake case
-        options_dict[to_snake_case(k)] = [x['name'] for x in v[field_type]['options']]
-    options_dict['is_peak_intensity'] = [True, False]
-
-    # Fieldnames are capitalised in Notion
-    options_dict_ordered = {k:options_dict[k] for k in options_key_order if k in options_dict}
-    input_column_names = [k for k in options_key_order] + ['n','n_peak_intensity']
 
     return render_template(
       'index.html',
@@ -220,6 +221,27 @@ def process_input_filters(exercise_filters_raw):
   print(exercise_filters_user_set)
   return(exercise_filters_user_set)
 
+@app.route("/pinned_programme",  methods = ['GET'])
+def pinned_programme():
+  # Parse arguments in GET request unlike other methods that take in request.get_json() containing table of input criteria
+  get_param_dict = request.args.to_dict()
+  # Expect `pinned_exercise_dict` to be columnar and of the form {id: [id_vals], input_row_idx: [idx_vals]}
+  pinned_exercise_ids = list(get_param_dict.values())
+  # pinned_exercise_dict = {'id': pinned_exercise_ids, 'input_row_idx': [0]*len(pinned_exercise_ids)}
+
+  # Set to_sort boolean argument to False to preserve order of ids supplied
+  preset_workout_df = fetch_pinned_workout(menu_db_query_slct_df, pinned_exercise_ids)
+
+  return render_template(
+      'index.html',
+      title='Motus',
+      input_column_names=input_column_names,
+      options_data=list(options_dict_ordered.values()),
+      new_workout_table = produce_workout_table_html(preset_workout_df, calisthenics_menu_base_url, output_column_names, pinned_exercise_ids),
+      calisthenics_menu_public_url=calisthenics_menu_public_url,
+      total_num_exercises = len(menu_db_query['results'])
+    )
+
 @app.route("/regenerate_workout",  methods = ['POST'])
 def regenerate_workout():
   # requires "application/json"
@@ -230,22 +252,9 @@ def regenerate_workout():
 
   pinned_exercise_dict = json_from_client['pinned_input_row_idxs_exercise_ids'] if 'pinned_input_row_idxs_exercise_ids' in json_from_client else {}
   pinned_exercise_ids = pinned_exercise_dict['id'] if 'id' in pinned_exercise_dict else []
+  # import pdb; pdb.set_trace()
 
   new_workout_df = generate_workout(menu_db_query_slct_df, exercise_filters_user_set, True, pinned_exercise_dict)
-  new_workout_table = produce_workout_table_html(new_workout_df, calisthenics_menu_base_url, output_column_names, pinned_exercise_ids)
-  return(new_workout_table, 200)
-
-@app.route("/pinned_programme",  methods = ['GET'])
-def pinned_programme():
-  # Parse arguments in GET request unlike other methods that take in request.get_json() containing table of input criteria
-  get_param_dict = request.args.to_dict()
-  # !! To check format of `pinned_exercise_dict` {'pin': [id1, id2, id3,...]}?
-  pinned_exercise_ids = get_param_dict.values()
-  pinned_exercise_dict = dict('pin': pinned_exercise_ids)
-
-  import pdb; pdb.set_trace()
-  # Set to_sort boolean argument to False to preserve order of ids supplied
-  new_workout_df = generate_workout(menu_db_query_slct_df, dict(), False, pinned_exercise_dict)
   new_workout_table = produce_workout_table_html(new_workout_df, calisthenics_menu_base_url, output_column_names, pinned_exercise_ids)
   return(new_workout_table, 200)
 
