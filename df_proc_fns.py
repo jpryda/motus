@@ -96,9 +96,27 @@ def generate_workout(menu_df, exercise_filters):
 #     result_df = pd.concat([result_df, new_phase_df])
 #   return(result_df)
 
-def generate_workout_3(menu_df, exercise_filters, pinned_exercise_dict={}):
+def sort_workout(new_workout_df):
+  # Pull out max ring height when sorting in ascending order
+  new_workout_df['first_ring_height'] = pd.Categorical(new_workout_df.apply(lambda x: x.ring_height[0] if len(x.ring_height) > 0 else x.ring_height, axis=1),
+                                                  categories=['High','Med','Low'],
+                                                  ordered=True)
+  new_workout_df['second_ring_height'] = pd.Categorical(new_workout_df.apply(lambda x: x.ring_height[1] if len(x.ring_height) == 2 else tuple(), axis=1),
+                                                  categories=['High','Med','Low'],
+                                                  ordered=True)
+  new_workout_sorted_df = (
+      new_workout_df
+      .sort_values(['first_ring_height','second_ring_height','is_peak_intensity'], ascending=[True, True, False])
+      .drop(['first_ring_height','second_ring_height'], axis=1)
+      .reset_index(drop=True)
+      .reset_index()
+      # .rename(columns={'index': '#'})
+  )#[['id'] + ['input_row_idx','index','exercise','parent_exercise','category','is_peak_intensity','equipment','primary_muscle_groups','ring_height','intensities','tempo']]
+  return(new_workout_sorted_df)
+
+# ??? Expect pinned_exercise_dict to be columnar - of the form {col1: [vals1], col2: [vals2]}...
+def generate_workout(menu_df, exercise_filters, to_sort=True, pinned_exercise_dict={}):
   result_df = pd.DataFrame()
-  specified_pinned_df = pd.DataFrame(pinned_exercise_dict)
 
   for idx, phase in enumerate(exercise_filters):
     df_to_sample = filter_groups(menu_df, phase)
@@ -108,6 +126,7 @@ def generate_workout_3(menu_df, exercise_filters, pinned_exercise_dict={}):
       df_to_sample = df_to_sample[~df_to_sample.id.isin(result_df.id)]
     # exclude from sampling if phase contains a pinned exercise and add to result_df
 
+    specified_pinned_df = pd.DataFrame(pinned_exercise_dict)
     if len(specified_pinned_df) > 0:
       specified_pinned_phase_df = specified_pinned_df[specified_pinned_df.input_row_idx == idx]
       if len(specified_pinned_phase_df) > 0:
@@ -117,7 +136,8 @@ def generate_workout_3(menu_df, exercise_filters, pinned_exercise_dict={}):
         df_to_sample = df_to_sample[~df_to_sample.id.isin(specified_pinned_phase_df.id)]
         result_df = pd.concat([result_df, df_pinned_sampled])
         phase['n'] = phase['n'] - len(df_pinned_sampled)
-        phase['n_peak_intensity'] = phase['n_peak_intensity'] - len(df_pinned_sampled[df_pinned_sampled.is_peak_intensity])
+        if 'n_peak_intensity' in phase:
+          phase['n_peak_intensity'] = phase['n_peak_intensity'] - len(df_pinned_sampled[df_pinned_sampled.is_peak_intensity])
 
     if 'n_peak_intensity' in phase:
       peak_df = df_to_sample[df_to_sample.is_peak_intensity]
@@ -133,46 +153,52 @@ def generate_workout_3(menu_df, exercise_filters, pinned_exercise_dict={}):
       new_phase_df = df_to_sample.sample(min(phase['n'], len(df_to_sample)), replace=False)
     result_df = pd.concat([result_df, new_phase_df])
   # import pdb; pdb.set_trace()
-  return(result_df)
 
-def sort_workout(new_workout_df):
-  # Pull out max ring height when sorting in ascending order
-  new_workout_df['first_ring_height'] = pd.Categorical(new_workout_df.apply(lambda x: x.ring_height[0] if len(x.ring_height) > 0 else x.ring_height, axis=1),
-                                                  categories=['High','Med','Low'],
-                                                  ordered=True)
-  new_workout_df['second_ring_height'] = pd.Categorical(new_workout_df.apply(lambda x: x.ring_height[1] if len(x.ring_height) == 2 else tuple(), axis=1),
-                                                  categories=['High','Med','Low'],
-                                                  ordered=True)
-  new_workout_sorted_df = (
-      new_workout_df
-      .sort_values(['first_ring_height','second_ring_height','is_peak_intensity'], ascending=[True, True, False])
-      .drop(['first_ring_height','second_ring_height'], axis=1)
-      .reset_index(drop=True)
-      .reset_index()
-      .rename(columns={'index': '#'})
-  )[['id'] + ['input_row_idx','#','exercise','parent_exercise','category','is_peak_intensity','equipment','primary_muscle_groups','ring_height','intensities','tempo']]
-  return(new_workout_sorted_df)
-
-def generate_and_sort_workout(preprocessed_menu_df, exercise_filters, pinned_exercise_dict={}):
-  new_workout = generate_workout_3(preprocessed_menu_df, exercise_filters, pinned_exercise_dict)
-  if len(new_workout) == 0:
+  if len(result_df) == 0:
     abort(404)
-  new_workout_sorted = sort_workout(new_workout)
+
+  # Sort workout
+  if(to_sort):
+    result_df = sort_workout(result_df)
 
   # Store several variables in a secure cookie session
   print('Session Variables')
   # Store the latest exercise ids sent to the user in a cookie rather than in HTML (could just keep this cached on the server)
-  session['new_workout_ids'] = list(new_workout_sorted['id'])
+  session['new_workout_ids'] = list(new_workout_df['id'])
   # Store the categories that were generated to include in the output DB name
-  session['categories'] = list(new_workout_sorted['category'])
+  session['categories'] = list(new_workout_df['category'])
 
-  print('Sorted workout DF')
-  print(new_workout_sorted)
-  return(new_workout_sorted)
+  # Could more cleanly pass in `[output_column_names]` and add in 'pin' element
+  print(new_workout_sorted[['pin','id','input_row_idx','index','exercise','parent_exercise','category','is_peak_intensity','equipment','primary_muscle_groups','ring_height','intensities','tempo']])
+  return(result_df)
 
-# def empty_tuple_fmttr(x):
-#   return('' if len(x) == 0 else x)
+# def save_session_vars(new_workout_df):
+#   # Store several variables in a secure cookie session
+#   print('Session Variables')
+#   # Store the latest exercise ids sent to the user in a cookie rather than in HTML (could just keep this cached on the server)
+#   session['new_workout_ids'] = list(new_workout_df['id'])
+#   # Store the categories that were generated to include in the output DB name
+#   session['categories'] = list(new_workout_df['category'])
 
+# def generate_and_sort_workout(preprocessed_menu_df, exercise_filters, pinned_exercise_dict={}):
+#   new_workout = generate_workout_3(preprocessed_menu_df, exercise_filters, pinned_exercise_dict)
+#   # if len(new_workout) == 0:
+#   #   abort(404)
+#   new_workout_sorted = sort_workout(new_workout)
+
+#   # # Store several variables in a secure cookie session
+#   # print('Session Variables')
+#   # # Store the latest exercise ids sent to the user in a cookie rather than in HTML (could just keep this cached on the server)
+#   # session['new_workout_ids'] = list(new_workout_sorted['id'])
+#   # # Store the categories that were generated to include in the output DB name
+#   # session['categories'] = list(new_workout_sorted['category'])
+
+#   print('Sorted workout DF')
+#   # Could more cleanly pass in `[output_column_names]` and add in 'pin' element
+#   print(new_workout_sorted[['pin','id','input_row_idx','index','exercise','parent_exercise','category','is_peak_intensity','equipment','primary_muscle_groups','ring_height','intensities','tempo']])
+#   return(new_workout_sorted)
+
+# Formatting functions to better present HTML table
 def to_snake_case(text):
   return(text.lower().replace(' ','_'))
 
@@ -184,22 +210,22 @@ def tuple_quotes_fmttr(x):
                .replace("(","")
                .replace(")","") if len(x) > 0 else '')
 
-def increment(x):
-  return(x+1)
+# def empty_tuple_fmttr(x):
+#   return('' if len(x) == 0 else x)
 
 def produce_workout_table_html(df, menu_db_base_url, output_column_names, pinned_exercise_ids=[]):
   df['exercise'] = (
     df.apply(lambda x: f"<a href='{menu_db_base_url}{x.id.replace('-','')}' target='_blank' class='link-dark'><span style='font-weight:bold'>{x.exercise}</span></a>"
     , axis=1)
   )
-  df['#'] = df['#'] + 1 # Start at 0
+  df['index'] = df['index'] + 1 # Start at 0
   df['pin'] = (
     df.apply(lambda x: '<input type="checkbox" class="form-check-input" checked>'
                         if x.id in pinned_exercise_ids
                         else '<input type="checkbox" class="form-check-input">'
     , axis=1)
   )
-  df = df[output_column_names]
+  df = df[output_column_names].rename(columns={'index': '#'})
   df.columns = df.columns.str.title().str.replace('_',' ')
   return(
     # '<hr> ' +
