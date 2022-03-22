@@ -52,6 +52,10 @@
     <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
     <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z"/>
   </svg>
+  <svg id='linkIcon' xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-link" viewBox="0 0 16 16">
+    <path d="M6.354 5.5H4a3 3 0 0 0 0 6h3a3 3 0 0 0 2.83-4H9c-.086 0-.17.01-.25.031A2 2 0 0 1 7 10.5H4a2 2 0 1 1 0-4h1.535c.218-.376.495-.714.82-1z"/>
+    <path d="M9 5.5a3 3 0 0 0-2.83 4h1.098A2 2 0 0 1 9 6.5h3a2 2 0 1 1 0 4h-1.535a4.02 4.02 0 0 1-.82 1H12a3 3 0 1 0 0-6H9z"/>
+  </svg>
 </defs>
 {% endblock %}
 
@@ -63,7 +67,10 @@
   <svg class="bi-clipboard" width="16" height="16" viewBox="0 0 16 16"><use xlink:href="#uploadIcon"/></svg>
   Notion
 </button>
-<button type="button" class="btn btn-outline-secondary shadow-none" id="copyTblBtn" data-clipboard-target="#outputTable" data-toggle="tooltip" data-placement="top" title="Copy to clipboard">
+<button type="button" class="btn btn-outline-secondary" id="linkBtn" data-toggle="tooltip" data-placement="top" title="Copy Workout URL">
+  <svg class="bi-clipboard" width="16" height="16" viewBox="0 0 16 16"><use xlink:href="#linkIcon"/></svg>
+</button>
+<button type="button" class="btn btn-outline-secondary shadow-none" id="copyTblBtn" data-clipboard-target="#outputTable" data-toggle="tooltip" data-placement="top" title="Copy Workout">
   <svg class="bi-clipboard" width="16" height="16" viewBox="0 0 16 16"><use xlink:href="#clipboardIcon"/></svg>
 </button>
 {% endblock %}
@@ -300,6 +307,47 @@
             }
         });
 
+        // var linkClipboard = new Clipboard('#linkBtn');
+        // linkClipboard.on('success', (event) => {
+        //   event.clearSelection();
+        //   var copyButtonSvg = $( "#copyTblBtn > svg > use" )
+        //   $(copyButtonSvg).attr("xlink:href", "#checkIcon");
+        //   // $( "#copyTblBtn" ).attr("data-bs-original-title", "Copied!");
+        //   setTimeout(() => {
+        //     $(copyButtonSvg).attr("xlink:href", "#clipboardIcon");
+        //     // $( "#copyTblBtn" ).attr("data-bs-original-title", "Over");
+        //   }, 1.5e3);
+        // });
+
+        function copyToClipboard(text) {
+          var dummy = document.createElement("textarea");
+          // to avoid breaking orgain page when copying more words
+          // cant copy when adding below this code
+          // dummy.style.display = 'none'
+          document.body.appendChild(dummy);
+          //Be careful if you use texarea. setAttribute('value', value), which works with "input" does not work with "textarea". – Eduard
+          dummy.value = text;
+          dummy.select();
+          document.execCommand("copy");
+          document.body.removeChild(dummy);
+        }
+
+        $("#linkBtn").click( function() {
+          var allTrs = $("#outputTable").find("tr")
+          var allExerciseIds = allTrs.find('td:last-child').map(function(){
+              return($(this).text())
+          }).get()
+
+          var shareUrl = window.location.href + 'pinned_programme?'
+          for (var i = 0; i < allExerciseIds.length; i++) {
+            shareUrl += i + '=' + allExerciseIds[i]
+            if(i < allExerciseIds.length - 1){
+              shareUrl += '&'
+            }
+          }
+          copyToClipboard(shareUrl)
+        });
+
         // Shortcut key bindings - refer to ASCII codes here https://www.freecodecamp.org/news/javascript-keycode-list-keypress-event-key-codes/
         $(document).keydown(function(e){
             if (e.which == 187) { // "+/=" button
@@ -322,8 +370,8 @@
             // return false; // stops any further keydown events being hit
         });
 
-        var clipboard = new Clipboard('#copyTblBtn');
-        clipboard.on('success', (event) => {
+        var outputTblClipboard = new ClipboardJS('#copyTblBtn');
+        outputTblClipboard.on('success', (event) => {
           event.clearSelection();
           var copyButtonSvg = $( "#copyTblBtn > svg > use" )
           $(copyButtonSvg).attr("xlink:href", "#checkIcon");

@@ -115,7 +115,11 @@ def sort_workout(new_workout_df):
   return(new_workout_sorted_df)
 
 def fetch_pinned_workout(menu_df, pinned_exercise_ids):
-    pinned_df = menu_df[menu_df.id.isin(pinned_exercise_ids)]
+    # pinned_df = menu_df[menu_df.id.isin(pinned_exercise_ids)]
+    # Maintain order of ids passed in when selecting rows. Could just set id as index
+    pinned_df = menu_df.iloc[pd.Index(menu_df['id']).get_indexer(pinned_exercise_ids)]
+
+    # Set to dummies since `output_column_names` contains these
     pinned_df['index'] = list(range(len(pinned_df)))
     pinned_df['input_row_idx'] = 0
 
