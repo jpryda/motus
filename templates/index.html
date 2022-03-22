@@ -307,32 +307,7 @@
             }
         });
 
-        // var linkClipboard = new Clipboard('#linkBtn');
-        // linkClipboard.on('success', (event) => {
-        //   event.clearSelection();
-        //   var copyButtonSvg = $( "#copyTblBtn > svg > use" )
-        //   $(copyButtonSvg).attr("xlink:href", "#checkIcon");
-        //   // $( "#copyTblBtn" ).attr("data-bs-original-title", "Copied!");
-        //   setTimeout(() => {
-        //     $(copyButtonSvg).attr("xlink:href", "#clipboardIcon");
-        //     // $( "#copyTblBtn" ).attr("data-bs-original-title", "Over");
-        //   }, 1.5e3);
-        // });
-
-        function copyToClipboard(text) {
-          var dummy = document.createElement("textarea");
-          // to avoid breaking orgain page when copying more words
-          // cant copy when adding below this code
-          // dummy.style.display = 'none'
-          document.body.appendChild(dummy);
-          //Be careful if you use texarea. setAttribute('value', value), which works with "input" does not work with "textarea". – Eduard
-          dummy.value = text;
-          dummy.select();
-          document.execCommand("copy");
-          document.body.removeChild(dummy);
-        }
-
-        $("#linkBtn").click( function() {
+        function getShareUrl(){
           var allTrs = $("#outputTable").find("tr")
           var allExerciseIds = allTrs.find('td:last-child').map(function(){
               return($(this).text())
@@ -345,7 +320,21 @@
               shareUrl += '&'
             }
           }
-          copyToClipboard(shareUrl)
+          return(shareUrl)
+        }
+
+        var shareUrlClipboard = new ClipboardJS('#linkBtn', {
+          text: function() {
+            return getShareUrl();
+          }
+        });
+        shareUrlClipboard.on('success', (event) => {
+          event.clearSelection();
+          var copyButtonSvg = $( "#linkBtn > svg > use" )
+          $(copyButtonSvg).attr("xlink:href", "#checkIcon");
+          setTimeout(() => {
+            $(copyButtonSvg).attr("xlink:href", "#clipboardIcon");
+          }, 1.5e3);
         });
 
         // Shortcut key bindings - refer to ASCII codes here https://www.freecodecamp.org/news/javascript-keycode-list-keypress-event-key-codes/
