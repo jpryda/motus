@@ -221,23 +221,22 @@ def process_input_filters(exercise_filters_raw):
   print(exercise_filters_user_set)
   return(exercise_filters_user_set)
 
-@app.route("/pinned_programme",  methods = ['GET'])
-def pinned_programme():
+@app.route("/preset_programme",  methods = ['GET'])
+def preset_programme():
   # Parse arguments in GET request unlike other methods that take in request.get_json() containing table of input criteria
   get_param_dict = request.args.to_dict()
-  # Expect `pinned_exercise_dict` to be columnar and of the form {id: [id_vals], input_row_idx: [idx_vals]}
-  pinned_exercise_ids = list(get_param_dict.values())
-  # pinned_exercise_dict = {'id': pinned_exercise_ids, 'input_row_idx': [0]*len(pinned_exercise_ids)}
+  preset_exercise_ids = list(get_param_dict.values())
 
   # Set to_sort boolean argument to False to preserve order of ids supplied
-  preset_workout_df = fetch_pinned_workout(menu_db_query_slct_df, pinned_exercise_ids)
+  preset_workout_df = fetch_preset_workout(menu_db_query_slct_df, preset_exercise_ids)
 
+  # `produce_workout_table_html` will set ALL 'pin' checkboxes to True since there is 100% intersection with the pinned ids `preset_exercise_ids`
   return render_template(
       'index.html',
       title='Motus',
       input_column_names=input_column_names,
       options_data=list(options_dict_ordered.values()),
-      new_workout_table = produce_workout_table_html(preset_workout_df, calisthenics_menu_base_url, output_column_names, pinned_exercise_ids),
+      new_workout_table = produce_workout_table_html(preset_workout_df, calisthenics_menu_base_url, output_column_names, preset_exercise_ids),
       calisthenics_menu_public_url=calisthenics_menu_public_url,
       total_num_exercises = len(menu_db_query['results'])
     )

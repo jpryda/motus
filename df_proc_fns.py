@@ -114,25 +114,24 @@ def sort_workout(new_workout_df):
   )#[['id'] + ['input_row_idx','index','exercise','parent_exercise','category','is_peak_intensity','equipment','primary_muscle_groups','ring_height','intensities','tempo']]
   return(new_workout_sorted_df)
 
-def fetch_pinned_workout(menu_df, pinned_exercise_ids):
-    # pinned_df = menu_df[menu_df.id.isin(pinned_exercise_ids)]
+def fetch_preset_workout(menu_df, preset_exercise_ids):
+    # pinned_df = menu_df[menu_df.id.isin(preset_exercise_ids)]
     # Maintain order of ids passed in when selecting rows. Could just set id as index
-    pinned_df = menu_df.iloc[pd.Index(menu_df['id']).get_indexer(pinned_exercise_ids)]
+    preset_workout_df = menu_df.iloc[pd.Index(menu_df['id']).get_indexer(preset_exercise_ids)]
 
     # Set to dummies since `output_column_names` contains these
-    pinned_df['index'] = list(range(len(pinned_df)))
-    pinned_df['input_row_idx'] = 0
+    preset_workout_df['index'] = list(range(len(preset_workout_df)))
+    preset_workout_df['input_row_idx'] = 0
 
     # Store several variables in a secure cookie session
     print('Session Variables')
     # Store the latest exercise ids sent to the user in a cookie rather than in HTML (could just keep this cached on the server)
-    session['new_workout_ids'] = list(pinned_df['id'])
+    session['new_workout_ids'] = list(preset_workout_df['id'])
     # Store the categories that were generated to include in the output DB name
-    session['categories'] = list(pinned_df['category'])
-    # Could more cleanly pass in `[output_column_names]` and add in 'pin' element
+    session['categories'] = list(preset_workout_df['category'])
 
-    print(pinned_df[['id','input_row_idx','index','exercise','parent_exercise','category','is_peak_intensity','equipment','primary_muscle_groups','ring_height','intensities','tempo']])
-    return(pinned_df)
+    print(preset_workout_df[['id','input_row_idx','index','exercise','parent_exercise','category','is_peak_intensity','equipment','primary_muscle_groups','ring_height','intensities','tempo']])
+    return(preset_workout_df)
 
 # Expect `pinned_exercise_dict` to be columnar and of the form {id: [id_vals], input_row_idx: [idx_vals]}
 def generate_workout(menu_df, exercise_filters, to_sort=True, pinned_exercise_dict={}):
