@@ -333,7 +333,19 @@
           var copyButtonSvg = $( "#linkBtn > svg > use" )
           $(copyButtonSvg).attr("xlink:href", "#checkIcon");
           setTimeout(() => {
+            $(copyButtonSvg).attr("xlink:href", "#linkIcon");
+          }, 1.5e3);
+        });
+
+        var outputTblClipboard = new ClipboardJS('#copyTblBtn');
+        outputTblClipboard.on('success', (event) => {
+          event.clearSelection();
+          var copyButtonSvg = $( "#copyTblBtn > svg > use" )
+          $(copyButtonSvg).attr("xlink:href", "#checkIcon");
+          // $( "#copyTblBtn" ).attr("data-bs-original-title", "Copied!");
+          setTimeout(() => {
             $(copyButtonSvg).attr("xlink:href", "#clipboardIcon");
+            // $( "#copyTblBtn" ).attr("data-bs-original-title", "Over");
           }, 1.5e3);
         });
 
@@ -357,18 +369,6 @@
             }
             // k - 75, p - 80
             // return false; // stops any further keydown events being hit
-        });
-
-        var outputTblClipboard = new ClipboardJS('#copyTblBtn');
-        outputTblClipboard.on('success', (event) => {
-          event.clearSelection();
-          var copyButtonSvg = $( "#copyTblBtn > svg > use" )
-          $(copyButtonSvg).attr("xlink:href", "#checkIcon");
-          // $( "#copyTblBtn" ).attr("data-bs-original-title", "Copied!");
-          setTimeout(() => {
-            $(copyButtonSvg).attr("xlink:href", "#clipboardIcon");
-            // $( "#copyTblBtn" ).attr("data-bs-original-title", "Over");
-          }, 1.5e3);
         });
 
         $("#pushNotionBtn").click( function() {
