@@ -25,6 +25,15 @@ body {
   color: white;
 }
 
+h1 > a {
+  text-decoration: none;
+  color: black;
+}
+
+h1 > a:hover {
+  color: black;
+}
+
 .btn-primary-no-hover {
   color: #fff;
   background-color: #007bff;
