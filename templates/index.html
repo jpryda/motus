@@ -313,7 +313,7 @@
               return($(this).text())
           }).get()
 
-          var shareUrl = window.location.href + 'pinned_programme?'
+          var shareUrl = window.location.protocol + '//' + window.location.host + '/pinned_programme?'
           for (var i = 0; i < allExerciseIds.length; i++) {
             shareUrl += i + '=' + allExerciseIds[i]
             if(i < allExerciseIds.length - 1){
